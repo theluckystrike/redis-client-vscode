@@ -1,0 +1,609 @@
+{
+  "name": "zovo-redis-client",
+  "displayName": "Redis Client & Redis GUI: Keys, TTL, Streams, Cluster & Sentinel (Redis Viewer)",
+  "description": "Free Redis client and Redis GUI for VS Code: browse keys with SCAN, edit strings, hashes, lists, sets, sorted sets, streams and RedisJSON, set TTL. Cluster, Sentinel, TLS and ACL users; works with Valkey and KeyDB. Console, server info, pub/sub, JSON export. No sign-in, no telemetry. Not affiliated with Redis Ltd.",
+  "version": "0.1.0",
+  "publisher": "zovo",
+  "license": "MIT",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#1B1F2B",
+    "theme": "dark"
+  },
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=18"
+  },
+  "categories": [
+    "Other",
+    "Data Science",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "redis",
+    "redis client",
+    "redis gui",
+    "redis viewer",
+    "redis explorer",
+    "valkey",
+    "keydb",
+    "redis cluster",
+    "redis sentinel",
+    "redis streams",
+    "ttl",
+    "cache",
+    "database client",
+    "key value",
+    "nosql",
+    "pubsub",
+    "redisjson",
+    "free"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [
+    "onView:redisClient.explorer"
+  ],
+  "extensionKind": [
+    "workspace",
+    "ui"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "description": "Connections are stored per user, not per workspace. Nothing runs from the workspace."
+    },
+    "virtualWorkspaces": true
+  },
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "redisClient",
+          "title": "Redis",
+          "icon": "media/activity.svg"
+        }
+      ]
+    },
+    "views": {
+      "redisClient": [
+        {
+          "id": "redisClient.explorer",
+          "name": "Redis Explorer",
+          "icon": "media/activity.svg",
+          "contextualTitle": "Redis"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "redisClient.explorer",
+        "contents": "No Redis connections yet. Add a single node, a cluster or a sentinel set: Redis, Valkey or KeyDB. Free, no sign-in.\n[Add Connection](command:redisClient.addConnection)\nThe extension connects only to the servers you add here. [Get started](command:redisClient.openWalkthrough)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "redisClient.addConnection",
+        "title": "Add Connection",
+        "category": "Redis",
+        "icon": "$(add)"
+      },
+      {
+        "command": "redisClient.editConnection",
+        "title": "Edit Connection",
+        "category": "Redis",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "redisClient.deleteConnection",
+        "title": "Delete Connection",
+        "category": "Redis",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "redisClient.disconnect",
+        "title": "Disconnect",
+        "category": "Redis",
+        "icon": "$(debug-disconnect)"
+      },
+      {
+        "command": "redisClient.reconnect",
+        "title": "Reconnect",
+        "category": "Redis",
+        "icon": "$(debug-restart)"
+      },
+      {
+        "command": "redisClient.refresh",
+        "title": "Refresh",
+        "category": "Redis",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "redisClient.toggleReadOnly",
+        "title": "Toggle Read-Only for This Connection",
+        "category": "Redis",
+        "icon": "$(lock)"
+      },
+      {
+        "command": "redisClient.copyUrl",
+        "title": "Copy Connection URL (without password)",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.filterKeys",
+        "title": "Filter Keys (Pattern and Type)…",
+        "category": "Redis",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "redisClient.clearFilter",
+        "title": "Clear Key Filter",
+        "category": "Redis",
+        "icon": "$(clear-all)"
+      },
+      {
+        "command": "redisClient.loadMore",
+        "title": "Load More Keys",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.openKey",
+        "title": "Open Key",
+        "category": "Redis",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "redisClient.addKey",
+        "title": "Add Key…",
+        "category": "Redis",
+        "icon": "$(add)"
+      },
+      {
+        "command": "redisClient.deleteKey",
+        "title": "Delete Key",
+        "category": "Redis",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "redisClient.renameKey",
+        "title": "Rename Key…",
+        "category": "Redis",
+        "icon": "$(edit)"
+      },
+      {
+        "command": "redisClient.copyKeyName",
+        "title": "Copy Key Name",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.openConsole",
+        "title": "Open Console",
+        "category": "Redis",
+        "icon": "$(terminal)"
+      },
+      {
+        "command": "redisClient.serverInfo",
+        "title": "Server Info, Slow Log and Clients",
+        "category": "Redis",
+        "icon": "$(pulse)"
+      },
+      {
+        "command": "redisClient.pubsub",
+        "title": "Pub/Sub",
+        "category": "Redis",
+        "icon": "$(broadcast)"
+      },
+      {
+        "command": "redisClient.exportKeys",
+        "title": "Export Keys to JSON…",
+        "category": "Redis",
+        "icon": "$(export)"
+      },
+      {
+        "command": "redisClient.importKeys",
+        "title": "Import Keys from JSON…",
+        "category": "Redis",
+        "icon": "$(cloud-upload)"
+      },
+      {
+        "command": "redisClient.memoryAnalysis",
+        "title": "Memory Analysis: Biggest Keys and Patterns (Pro)",
+        "category": "Redis",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "redisClient.bulkByPattern",
+        "title": "Bulk TTL / Delete by Pattern (Pro)",
+        "category": "Redis",
+        "icon": "$(wand)"
+      },
+      {
+        "command": "redisClient.openWalkthrough",
+        "title": "Get Started",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.supportDeveloper",
+        "title": "Support the developer",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.moreViewers",
+        "title": "More free tools by Zovo",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.enterLicenseKey",
+        "title": "Zovo: Enter license key",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.getPro",
+        "title": "Zovo: Get Pro (USD 19 once, all Zovo extensions)",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.unlockWithSponsors",
+        "title": "Zovo: Unlock Pro with GitHub Sponsors",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.payWithPayPal",
+        "title": "Zovo: Pay for Zovo Pro with PayPal (USD 19)",
+        "category": "Redis"
+      },
+      {
+        "command": "redisClient.removeLicense",
+        "title": "Zovo: Remove license from this editor",
+        "category": "Redis"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "redisClient.addConnection",
+          "when": "view == redisClient.explorer",
+          "group": "navigation@1"
+        },
+        {
+          "command": "redisClient.refresh",
+          "when": "view == redisClient.explorer",
+          "group": "navigation@2"
+        },
+        {
+          "command": "redisClient.openWalkthrough",
+          "when": "view == redisClient.explorer",
+          "group": "3_zovo@0"
+        },
+        {
+          "command": "redisClient.moreViewers",
+          "when": "view == redisClient.explorer",
+          "group": "3_zovo@1"
+        },
+        {
+          "command": "redisClient.supportDeveloper",
+          "when": "view == redisClient.explorer",
+          "group": "3_zovo@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "redisClient.openConsole",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection-open/",
+          "group": "inline@1"
+        },
+        {
+          "command": "redisClient.refresh",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "inline@2"
+        },
+        {
+          "command": "redisClient.openConsole",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "1_tools@1"
+        },
+        {
+          "command": "redisClient.serverInfo",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "1_tools@2"
+        },
+        {
+          "command": "redisClient.pubsub",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "1_tools@3"
+        },
+        {
+          "command": "redisClient.editConnection",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "3_conn@1"
+        },
+        {
+          "command": "redisClient.toggleReadOnly",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "3_conn@2"
+        },
+        {
+          "command": "redisClient.copyUrl",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "3_conn@3"
+        },
+        {
+          "command": "redisClient.reconnect",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "3_conn@4"
+        },
+        {
+          "command": "redisClient.disconnect",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection-open/",
+          "group": "3_conn@5"
+        },
+        {
+          "command": "redisClient.deleteConnection",
+          "when": "view == redisClient.explorer && viewItem =~ /^connection/",
+          "group": "3_conn@6"
+        },
+        {
+          "command": "redisClient.filterKeys",
+          "when": "view == redisClient.explorer && viewItem =~ /^db/",
+          "group": "inline@1"
+        },
+        {
+          "command": "redisClient.addKey",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/",
+          "group": "inline@2"
+        },
+        {
+          "command": "redisClient.filterKeys",
+          "when": "view == redisClient.explorer && viewItem =~ /^db/",
+          "group": "1_keys@1"
+        },
+        {
+          "command": "redisClient.clearFilter",
+          "when": "view == redisClient.explorer && viewItem == db-filtered",
+          "group": "1_keys@2"
+        },
+        {
+          "command": "redisClient.addKey",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/",
+          "group": "1_keys@3"
+        },
+        {
+          "command": "redisClient.refresh",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/",
+          "group": "1_keys@4"
+        },
+        {
+          "command": "redisClient.openConsole",
+          "when": "view == redisClient.explorer && viewItem =~ /^db/",
+          "group": "2_tools@1"
+        },
+        {
+          "command": "redisClient.exportKeys",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/",
+          "group": "2_tools@2"
+        },
+        {
+          "command": "redisClient.importKeys",
+          "when": "view == redisClient.explorer && viewItem =~ /^db/",
+          "group": "2_tools@3"
+        },
+        {
+          "command": "redisClient.memoryAnalysis",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/ && config.redisClient.showProFeatures",
+          "group": "3_pro@1"
+        },
+        {
+          "command": "redisClient.bulkByPattern",
+          "when": "view == redisClient.explorer && viewItem =~ /^(db|folder)/ && config.redisClient.showProFeatures",
+          "group": "3_pro@2"
+        },
+        {
+          "command": "redisClient.copyKeyName",
+          "when": "view == redisClient.explorer && viewItem =~ /^(key|folder)$/",
+          "group": "9_copy@1"
+        },
+        {
+          "command": "redisClient.openKey",
+          "when": "view == redisClient.explorer && viewItem == key",
+          "group": "1_key@1"
+        },
+        {
+          "command": "redisClient.renameKey",
+          "when": "view == redisClient.explorer && viewItem == key",
+          "group": "1_key@2"
+        },
+        {
+          "command": "redisClient.deleteKey",
+          "when": "view == redisClient.explorer && viewItem == key",
+          "group": "1_key@3"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "redisClient.loadMore",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.openKey",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.deleteKey",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.renameKey",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.copyKeyName",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.clearFilter",
+          "when": "false"
+        },
+        {
+          "command": "redisClient.memoryAnalysis",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.bulkByPattern",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.enterLicenseKey",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.getPro",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.unlockWithSponsors",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.payWithPayPal",
+          "when": "config.redisClient.showProFeatures"
+        },
+        {
+          "command": "redisClient.removeLicense",
+          "when": "config.redisClient.showProFeatures"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Redis Client",
+      "properties": {
+        "redisClient.scanPageSize": {
+          "type": "number",
+          "default": 10000,
+          "minimum": 100,
+          "description": "Keys loaded into the tree per page. SCAN runs in steps of redisClient.scanCount, so a big database never blocks the server or the editor. Load more keys from the end of the list."
+        },
+        "redisClient.scanCount": {
+          "type": "number",
+          "default": 1000,
+          "minimum": 10,
+          "maximum": 100000,
+          "description": "The COUNT hint of each SCAN call."
+        },
+        "redisClient.pageSize": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 10000,
+          "description": "Rows read per page in the hash, list, set, sorted set and stream editors."
+        },
+        "redisClient.maxValueSizeMB": {
+          "type": "number",
+          "default": 5,
+          "minimum": 1,
+          "maximum": 512,
+          "description": "String values larger than this open as a size message (with Show the first 64 KB and Save to a file) instead of loading into the editor."
+        },
+        "redisClient.exportMaxValueMB": {
+          "type": "number",
+          "default": 64,
+          "minimum": 1,
+          "maximum": 1024,
+          "description": "Export skips string values larger than this and lists them at the end."
+        },
+        "redisClient.connectTimeoutSeconds": {
+          "type": "number",
+          "default": 10,
+          "minimum": 2,
+          "maximum": 120,
+          "description": "Give up connecting after this many seconds, with a message that names the step that failed (DNS, TCP, TLS, AUTH)."
+        },
+        "redisClient.commandTimeoutSeconds": {
+          "type": "number",
+          "default": 60,
+          "minimum": 5,
+          "maximum": 3600,
+          "description": "Give up on a command that gets no answer after this many seconds."
+        },
+        "redisClient.historySize": {
+          "type": "number",
+          "default": 200,
+          "minimum": 10,
+          "maximum": 5000,
+          "description": "Console commands kept per connection on this computer (VS Code global storage). Nothing is sent anywhere."
+        },
+        "redisClient.askForRating": {
+          "type": "boolean",
+          "default": true,
+          "description": "Ask for a Marketplace rating after 2 good sessions at least 4 hours apart. \"Later\" asks once more after 7 days, \"No thanks\" never asks again. Never after an error. Nothing is sent anywhere."
+        },
+        "redisClient.showSupportLinks": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the small Rate, More free tools, Sponsor and PayPal links at the bottom of the key editor and the other panels. Nothing is sent anywhere."
+        },
+        "redisClient.showProFeatures": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Zovo Pro tools (Memory Analysis, Bulk TTL / Delete by Pattern) and the Zovo Pro commands in menus and the command palette. Set it to false to hide them. Everything free keeps working."
+        }
+      }
+    },
+    "walkthroughs": [
+      {
+        "id": "redisClient.start",
+        "title": "Get started with the Redis client",
+        "description": "Connect to Redis, Valkey or KeyDB, browse keys and edit values. Free, no sign-in.",
+        "steps": [
+          {
+            "id": "connect",
+            "title": "Add a connection",
+            "description": "Paste a URL such as redis://default:secret@localhost:6379/0, or pick Cluster or Sentinel and list the nodes. TLS with your own CA file works too. The password goes to VS Code's secret storage.\n[Add Connection](command:redisClient.addConnection)",
+            "media": {
+              "markdown": "walkthrough/connect.md"
+            },
+            "completionEvents": [
+              "onCommand:redisClient.addConnection"
+            ]
+          },
+          {
+            "id": "browse",
+            "title": "Browse and edit keys",
+            "description": "Expand a database: keys load with SCAN in pages and group into folders by \":\". Click a key to open its editor: strings (text, JSON, hex), hashes, lists, sets, sorted sets, streams with consumer groups, RedisJSON. Set or remove the TTL in the header.",
+            "media": {
+              "markdown": "walkthrough/browse.md"
+            }
+          },
+          {
+            "id": "tools",
+            "title": "Console, server info and pub/sub",
+            "description": "Right-click a connection for the console (history, Tab completion, a question before FLUSHALL and the like), server info with the slow log and clients, and pub/sub. Turn on read-only for a production server.\n[Open Console](command:redisClient.openConsole)",
+            "media": {
+              "markdown": "walkthrough/tools.md"
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node scripts/build.js --production",
+    "test": "node scripts/build.js --production && ZOVO_SPONSORS_MODULE=$PWD/src/license/sponsors.js node --test \"test/*.test.js\"",
+    "test:it": "ZOVO_REDIS_IT=1 node --test --test-concurrency=1 test/integration.test.js",
+    "package": "npm run build && npx -y @vscode/vsce package --no-dependencies -o dist/"
+  },
+  "devDependencies": {
+    "@types/vscode": "~1.90.0",
+    "esbuild": "0.28.2",
+    "ioredis": "5.11.1"
+  },
+  "homepage": "https://github.com/theluckystrike/redis-client-vscode#readme",
+  "bugs": {
+    "url": "https://github.com/theluckystrike/redis-client-vscode/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theluckystrike/redis-client-vscode"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/theluckystrike"
+  }
+}
